@@ -7,7 +7,7 @@ const byte MOTOR_PIN = 8;
 const byte SERVO_PIN = 5;
 
 // Wheel circumference in meters
-const float wheel_circumference = 0.2042; 
+const float WHEEL_CIRCUMFERENCE = 0.2042; 
 
 
 // Counter for hall interrupts
@@ -21,7 +21,6 @@ Servo steering_servo;
 int motor_speed = 1500;  // 1500 stilla, 2000 max frammåt, 1000 max backåt
 int steering_angle = 70; // mellan 40 och 100 typ
 
-
 // Forward speed computed by encoder
 float current_vel = 0;
 
@@ -32,6 +31,7 @@ volatile float delta_time = 0;
 
 // NOT CURRENTLY IN USE
 bool flag = true;
+bool update_flag = false;
 
 // user input...
 String input = "";
@@ -57,12 +57,26 @@ void setup() {
 }
 
 void loop() {
+    // uppdaterar delta_time
+    if (update_flag) {
+      updateTime()
+      update_flag = false
+    }
+
+    // printar velocity
+    if (delta_time > 0) {
+        v = getVelocity()
+        Serial.print(v);
+        Serial.println(" m/s");
+        delta_time = 0; // Tveksam på denna, tekniskt sett ska nog inte print funktionen återställa delta_time
+    }
+
     if (Serial.available() > 0) { 
         input = Serial.readStringUntil('\n');
         int_input = input.toInt();
         Serial.println(input);
         Serial.println(int_input);
-        //Serial.print(int_input);
+
         // change motor speed
         if (int_input > 1000 && int_input < 2000) {
             motor_speed = int_input;
@@ -74,40 +88,36 @@ void loop() {
             Serial.print("Set steering angle to ");
             Serial.println(steering_angle);
         }
-      
     }
     
     
     //steering_servo.write(steering_angle);
     //motor_servo.writeMicroseconds(motor_speed);
-    
-    
-    
-    
-    
-    
-    
-  
 }
 
-// Borde flytta typ allt utom counter++ till loop(), millis + print är slow af
+// Updaterar delta_time
+void updateTime(){
+  current_time = millis();
+  delta_time = current_time-last_time;
+  last_time = current_time;
+}
+
+// Returnerar Velocity basarat på delta_time
+void getVelocity(){
+    delta_time /= 1000;
+    current_vel = WHEEL_CIRCUMFERENCE/delta_time;
+    return current_vel
+}
+
 void hallISR(){
-    current_time = millis(); // ajabaja
-    delta_time = current_time-last_time;
+    update_flag=true
     hall_counter++;
-    last_time = current_time;
-    flag = true;
     /*
+    flag = true;
     if (flag){
       Serial.println(hall_counter);
       flag = false;
     }*/
-    delta_time /= 1000;
-    current_vel = wheel_circumference/delta_time;
     
-    if (delta_time > 0) {
-        Serial.print(current_vel); //aja baja
-        Serial.println(" m/s");
-        delta_time = 0;
-    }
+    
 }
