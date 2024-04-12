@@ -8,10 +8,13 @@ const byte SERVO_PIN = 5;
 
 // Wheel circumference in meters
 const float WHEEL_CIRCUMFERENCE = 0.2042; 
+const int  NUM_MAGNETS = 1;
 
 
 // Counter for hall interrupts
 volatile int hall_counter = 0;     
+volatile int last_hall_counter = 0;
+volatile int delta_hall_counter = 0;
 
 // Motor and steering servos 
 Servo motor_servo;
@@ -59,16 +62,20 @@ void setup() {
 void loop() {
     // uppdaterar delta_time
     if (update_flag) {
-      updateTime()
-      update_flag = false
+      updateDelta();
+      update_flag = false;
+    } else {
+      // if not updated the deltas are reset
+      delta_time = 0;
+      delta_hall_counter = 0;
     }
 
     // printar velocity
     if (delta_time > 0) {
-        v = getVelocity()
+        v = getVelocity();
         Serial.print(v);
         Serial.println(" m/s");
-        delta_time = 0; // Tveksam på denna, tekniskt sett ska nog inte print funktionen återställa delta_time
+        //delta_time = 0; // Tveksam på denna, tekniskt sett ska nog inte print funktionen återställa delta_time // Flyttad upp till if(update_flag)
     }
 
     if (Serial.available() > 0) { 
@@ -96,17 +103,23 @@ void loop() {
 }
 
 // Updaterar delta_time
-void updateTime(){
+void updateDelta(){
+  // updates delta_time
   current_time = millis();
   delta_time = current_time-last_time;
   last_time = current_time;
+
+  // updates delta_hall_counter
+  delta_hall_counter = hall_counter-last_hall_counter;
+  last_hall_counter = hall_counter;
 }
 
 // Returnerar Velocity basarat på delta_time
 void getVelocity(){
     delta_time /= 1000;
-    current_vel = WHEEL_CIRCUMFERENCE/delta_time;
-    return current_vel
+    distance = (delta_hall_counter*WHEEL_CIRCUMFERENCE)/NUM_MAGNETS;
+    current_vel = distance/delta_time;
+    return current_vel;
 }
 
 void hallISR(){
@@ -118,6 +131,4 @@ void hallISR(){
       Serial.println(hall_counter);
       flag = false;
     }*/
-    
-    
 }
