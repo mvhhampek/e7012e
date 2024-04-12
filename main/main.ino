@@ -72,7 +72,7 @@ void loop() {
 
     // printar velocity
     if (delta_time > 0) {
-        v = getVelocity();
+        float v = getVelocity();
         Serial.print(v);
         Serial.println(" m/s");
         //delta_time = 0; // Tveksam på denna, tekniskt sett ska nog inte print funktionen återställa delta_time // Flyttad upp till if(update_flag)
@@ -115,15 +115,15 @@ void updateDelta(){
 }
 
 // Returnerar Velocity basarat på delta_time
-void getVelocity(){
+float getVelocity(){
     delta_time /= 1000;
-    distance = (delta_hall_counter*WHEEL_CIRCUMFERENCE)/NUM_MAGNETS;
+    float distance = (delta_hall_counter*WHEEL_CIRCUMFERENCE)/NUM_MAGNETS;
     current_vel = distance/delta_time;
     return current_vel;
 }
 
 void hallISR(){
-    update_flag=true
+    update_flag=true;
     hall_counter++;
     /*
     flag = true;
