@@ -26,7 +26,8 @@ void PID::set_velocity(float velocity){
 	_target_velocity = velocity;
 }
 
-int PID::update(int current_time){
+int PID::update(int current_time) {
+  if (current_time-_last_time > 100) { 
   _delta_time = float(current_time-_last_time);
 
   _velocity_error = _target_velocity-_velocity;
@@ -53,12 +54,13 @@ int PID::update(int current_time){
   //  Serial.println(" ");
   //}
 
-  _u = (_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1575);
+  _u = ((_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1575)+_u)/2;
   if (_u<1575) {
     _u=1500;
   }
   if (_u>1700) {
     _u=1700;
+  }
   }
   return _u;
 }

@@ -24,7 +24,7 @@ Servo steering_servo;
 // PID constants
 volatile float Kp = 1.4;
 volatile float Ki = 2.2;
-volatile float Kd = 0.7;
+volatile float Kd = 0;
 
 PID pid(motor_servo, Kp, Ki, Kd);
 
@@ -62,7 +62,7 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(HALL_INTERRUPT_PIN), hallISR, RISING);
     
     Serial.println("setup");
-    steering_servo.write(50);
+    steering_servo.write(70);
     motor_servo.writeMicroseconds(motor_speed);
     delay(1000);    
     motor_servo.writeMicroseconds(1500);
@@ -70,13 +70,10 @@ void setup() {
 }
 
 void loop() {
-    delay(5);
     current_time = millis();
 
-    int u = pid.update(current_time);
-      //Serial.print(u);
-      //Serial.println(" u");
-    motor_servo.writeMicroseconds(u);
+    //int u = pid.update(current_time);
+    //motor_servo.writeMicroseconds(u);
 
     if (current_time%1000==0) {
         Serial.print(current_vel);
@@ -92,11 +89,6 @@ void loop() {
       delta_time = 0;
       delta_hall_counter = 0;
     }
-
-    //Serial.print(current_time-last_time);
-    //Serial.println(" delta");
-    //Serial.print((WHEEL_CIRCUMFERENCE)/(NUM_MAGNETS*0.05));
-    //Serial.println(" inte delta");
 
     if (current_time-last_time > 50) {
       current_vel = 0;
@@ -155,20 +147,6 @@ void updateDelta(){
 // Returnerar Velocity basarat på delta_time
 float getVelocity(){
     float distance = (delta_hall_counter*WHEEL_CIRCUMFERENCE)/NUM_MAGNETS;
-
-    //Serial.print(delta_hall_counter);
-    //Serial.println(" delta_hall_counter");
-    //Serial.print(WHEEL_CIRCUMFERENCE);
-    //Serial.println(" WHEEL_CIRCUMFERENCE");
-    //Serial.print(NUM_MAGNETS);
-    //Serial.println(" NUM_MAGNETS");
-    //Serial.print(distance);
-    //Serial.println(" distance");
-    //Serial.print(current_vel);
-    //Serial.println(" current_vel");
-    //Serial.print(delta_time);
-    //Serial.println(" delta_time");
-
     current_vel = (((distance*1000)/(delta_time))+current_vel)/2;
     return current_vel;
 }
