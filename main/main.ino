@@ -72,8 +72,8 @@ void setup() {
 void loop() {
     current_time = millis();
 
-    //int u = pid.update(current_time);
-    //motor_servo.writeMicroseconds(u);
+    int u = pid.update(current_time);
+    motor_servo.writeMicroseconds(u);
 
     if (current_time%1000==0) {
         Serial.print(current_vel);
