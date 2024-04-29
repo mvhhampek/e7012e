@@ -73,6 +73,9 @@ void loop() {
     current_time = millis();
 
     int u = pid.update(current_time);
+    if (u<1585) {
+      u = 1500;
+    }
     motor_servo.writeMicroseconds(u);
 
     if (current_time%1000==0) {
@@ -94,12 +97,6 @@ void loop() {
       current_vel = 0;
       pid.update_velocity(current_vel);
     }
-
-    // printar velocity
-    if (delta_time > 0) {
-        Serial.print(current_vel);
-        Serial.println(" m/s");
-      }
 
     if (Serial.available() > 0) { 
         input = Serial.readStringUntil('\n');
