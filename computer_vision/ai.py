@@ -15,4 +15,4 @@ class ai():
 
     def predict_image(self,img):
         img = self.transform(img)
-        return torch.argmax(self.model(img),dim=1)
+        return torch.argmax(self.model(img),dim=1).item()
