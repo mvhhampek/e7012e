@@ -1,10 +1,10 @@
 import cv2
 import os
 
-save_dir = "images2/red"
+save_dir = "images3/green"
 os.makedirs(save_dir, exist_ok=True) 
 
-file_name_prefix = "red"
+file_name_prefix = "green"
 suffix_index = 0
 # Initialize the video capture object.
 cap = cv2.VideoCapture(1)
