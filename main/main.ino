@@ -33,6 +33,10 @@ PID pid(motor_servo, Kp, Ki, Kd);
 int motor_speed = 1500;  // 1500 stilla, 2000 max frammåt, 1000 max backåt
 int steering_angle = 70; // mellan 40 och 100 typ
 
+int speed_ref = 0;
+int old_speed_ref = -1;
+int old_steering_angle = -1;
+
 // Forward speed computed by encoder
 float current_vel = 0;
 
@@ -41,7 +45,6 @@ volatile int last_time = 0;
 volatile int current_time = 1;
 volatile int delta_time = 0;
 
-// NOT CURRENTLY IN USE
 bool flag = true;
 bool update_flag = false;
 
@@ -100,10 +103,18 @@ void loop() {
 
     if (Serial.available() > 0) { 
         input = Serial.readStringUntil('\n');
-        int_input = input.toInt();
-        Serial.println(input);
-        Serial.println(int_input);
+        int split_index = input.indexOf('-');
+        steering_angle = input.substring(0,split_index).toInt();
+        speed_ref = input.substring(split_index+1).toInt();  
 
+        if (old_speed_ref != speed_ref || old_steering_angle != steering_angle){
+            pid.set_velocity(int_input);
+            steering_servo.write(steering_angle);
+            old_speed_ref = speed_ref;
+            old_steering_angle = steering_angle;
+        }
+
+        /*
         // change motor speed
         if (int_input > 1000 && int_input < 2000) {
             motor_speed = int_input;
@@ -118,9 +129,10 @@ void loop() {
             Serial.println(steering_angle);
         } //change ref
         else if (int_input > -5 && int_input < 5) {
-            pid.set_velocity(int_input);
+            
             Serial.print("Set ref to ");
-        }  
+        }  */
+
     }    
 }
 
