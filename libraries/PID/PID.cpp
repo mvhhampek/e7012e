@@ -4,7 +4,7 @@
 PID::PID(Servo motor_servo, float Kp, float Ki, float Kd) {
   _motor_servo = motor_servo;
 
-  _u = 0;
+  _u = 1575;
   
   _Kp = Kp;
   _Ki = Ki;
@@ -54,7 +54,7 @@ int PID::update(int current_time) {
   //  Serial.println(" ");
   //}
 
-  _u = ((_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1575)+_u+1575)/2;
+  _u = ((_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1575)+_u)/2;
   if (_u<1575) {
     _u=1500;
   }
