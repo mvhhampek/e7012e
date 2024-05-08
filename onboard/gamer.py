@@ -30,13 +30,13 @@ def write_to_arduino(data):
     arduino.write(data.encode('ascii'))
 
 def run():
-    drive_flag = act_on_pred(prediction(cap, drive_flag))
+    drive_flag = act_on_pred(camera.prediction(cap, drive_flag))
     if drive_flag:
-        pass
-        # go 
+        inp = "70-2"
+        write_to_arduino(inp)
     else:
-        pass
-        # dont go
+        inp = "70-0"
+        write_to_arduino(inp)
 
 
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     left = 0
     
     drive_flag = False
-    cap = init_camera()
+    cap = camera.init_camera()
     stop_thread = threading.Event()
 
     read_thread = threading.Thread(target=read_from_arduino)
@@ -63,8 +63,7 @@ if __name__ == '__main__':
 
     try:
         while True:
-            inp = "70-0"
-            write_to_arduino(inp)
+           run()
     finally:
         stop_thread.set()
         read_thread.join()

@@ -33,12 +33,20 @@ volatile int delta_hall_counter = 0;
 Servo motor_servo;
 Servo steering_servo;
 
-// PID constants
+// motor PID constants
 volatile float Kp = 1.4;
 volatile float Ki = 2.2;
 volatile float Kd = 0;
-
 PID pid(motor_servo, Kp, Ki, Kd);
+
+
+// steerig PID constants
+volatile float s_Kp = 1.4;
+volatile float s_Ki = 2.2;
+volatile float s_Kd = 0.1;
+steeringPID steeringPID(steering_servo, s_Kp, s_Ki, s_Kd)
+
+
 
 
 // Angle and "speed" to send to motor servo and steering servo
@@ -96,6 +104,7 @@ void setup() {
 
 void loop() {
     current_time = millis();
+    
 
     int u = pid.update(current_time);
     if (u<1585) {
@@ -104,8 +113,12 @@ void loop() {
     motor_servo.writeMicroseconds(u);
 
     
-    Serial.print(current_vel);
-    Serial.println(" m/s");
+
+    left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
+    right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
+    int angle = steeringPID.update(current_time, left_distance, right_distance);
+    steering_servo.write(angle);
+
     
     // uppdaterar delta_time
     if (update_flag) {
@@ -122,8 +135,6 @@ void loop() {
       pid.update_velocity(current_vel);
     }
 
-    //left_distance = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
-    //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
 
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PING);
     //forward_distance = getDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN);
@@ -132,8 +143,11 @@ void loop() {
     //Serial.println(right_distance);
     //Serial.print("Forward distance: ");
     //Serial.println(forward_distance);
+    
 
-
+    String to_send = String(current_vel) + "-" + String(left_distance) + "-" + String(right_distance);
+    
+    Serial.println(to_send);
 
 
     if (Serial.available() > 0) { 
@@ -152,7 +166,6 @@ void setSpeedAndAngle(){
         steering_servo.write(steering_angle);
         old_speed_ref = speed_ref;
         old_steering_angle = steering_angle;
-        Serial.println(input);
     }
 
 }
@@ -174,6 +187,8 @@ long getDistance(byte trigger_pin, byte echo_pin){
     return cm;
 
 }
+
+
 
 long microsecondsToCentimeters(long microseconds){
   return microseconds/29/2;
