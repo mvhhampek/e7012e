@@ -1,5 +1,6 @@
 #include <Servo.h>
 #include <PID.h>
+#include <steeringPID.h>
 
 ////// Constants //////
 // Pins
@@ -8,11 +9,11 @@ const byte MOTOR_PIN = 8;
 const byte SERVO_PIN = 5;
 
 
-const byte LEFT_PING_PIN = 26;
-const byte LEFT_ECHO_PIN = 27;
+const byte LEFT_PING_PIN = 22;
+const byte LEFT_ECHO_PIN = 23;
 
-const byte RIGHT_PING_PIN = 32;
-const byte RIGHT_ECHO_PIN = 33;
+const byte RIGHT_PING_PIN = 52;
+const byte RIGHT_ECHO_PIN = 53;
 
 
 
@@ -41,17 +42,23 @@ PID pid(motor_servo, Kp, Ki, Kd);
 
 
 // steerig PID constants
-volatile float s_Kp = 1.4;
-volatile float s_Ki = 2.2;
-volatile float s_Kd = 0.1;
-steeringPID steeringPID(steering_servo, s_Kp, s_Ki, s_Kd)
+volatile float s_Kp = 0.3;
+volatile float s_Ki = 0;
+volatile float s_Kd = 0;
+steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd);
 
-
-
+// N point running average for left, right distance
+const int N_dist = 3;
+float left_distances[N_dist] = {0};
+float right_distances[N_dist] = {0}; 
+float left_avg = 0;
+float right_avg = 0;
+int left_index = 0;
+int right_index = 0;
 
 // Angle and "speed" to send to motor servo and steering servo
 int motor_speed = 1500;  // 1500 stilla, 2000 max frammåt, 1000 max backåt
-int steering_angle = 70; // mellan 40 och 100 typ
+int steering_angle = 70; // mellan 45 och 95 typ, 45 höger, 95 vänster
 
 int speed_ref = 0;
 int old_speed_ref = 0;
@@ -110,15 +117,25 @@ void loop() {
     if (u<1585) {
       u = 1500;
     }
-    motor_servo.writeMicroseconds(u);
+    //motor_servo.writeMicroseconds(u);
 
     
 
     left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
     right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
-    int angle = steeringPID.update(current_time, left_distance, right_distance);
+    left_avg = getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index);
+    right_avg = getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index);
+    /*
+    if (right_avg>100){
+        right_avg = 100;
+    }    
+    if (left_avg>100){
+        left_avg = 100;
+    }*/
+    int angle = s_pid.update(current_time, left_avg, right_avg);
     steering_servo.write(angle);
 
+    //Serial.println(angle);
     
     // uppdaterar delta_time
     if (update_flag) {
@@ -139,22 +156,29 @@ void loop() {
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PING);
     //forward_distance = getDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN);
     
-    //Serial.print("Right distance: ");
-    //Serial.println(right_distance);
-    //Serial.print("Forward distance: ");
-    //Serial.println(forward_distance);
+    Serial.print("R: ");
+    Serial.print(right_avg);
+    Serial.print("\tL: ");
+    Serial.print(left_avg);
+    Serial.print("\tU: ");
+    Serial.println(angle);
     
 
     String to_send = String(current_vel) + "-" + String(left_distance) + "-" + String(right_distance);
     
-    Serial.println(to_send);
+    //Serial.println(to_send);
 
 
     if (Serial.available() > 0) { 
-        setSpeedAndAngle();
+        setSpeed();
+        //setSpeedAndAngle();
     }    
 }
 
+void setSpeed(){
+  input = Serial.readStringUntil('\n');
+  motor_servo.writeMicroseconds(input.toInt());
+}
 void setSpeedAndAngle(){
     input = Serial.readStringUntil('\n');
     int split_index = input.indexOf('-');
@@ -163,7 +187,9 @@ void setSpeedAndAngle(){
 
     if (old_speed_ref != speed_ref || old_steering_angle != steering_angle){
         pid.set_velocity(speed_ref);
-        steering_servo.write(steering_angle);
+        if (steering_angle >= 55 && steering_angle <= 95) {
+            steering_servo.write(steering_angle);
+        }
         old_speed_ref = speed_ref;
         old_steering_angle = steering_angle;
     }
@@ -173,22 +199,31 @@ void setSpeedAndAngle(){
 
 long getDistance(byte trigger_pin, byte echo_pin){
     long duration, cm;
-    
+    // duration:
     digitalWrite(trigger_pin, LOW);
     delayMicroseconds(2);
     digitalWrite(trigger_pin, HIGH);
     delayMicroseconds(10);
     digitalWrite(trigger_pin, LOW);
-    //pinMode(echo_pin, INPUT);
     duration = pulseIn(echo_pin, HIGH);
-    cm = microsecondsToCentimeters(duration);
-
-    //delay(100);
-    return cm;
-
+    
+    
+    // distance:
+    return microsecondsToCentimeters(duration);
 }
 
+float getAverageDistance(byte trigger_pin, byte echo_pin, float *distances, int &index){
+    long cm = getDistance(trigger_pin, echo_pin);
+    
+    distances[index] = cm;
+    index = (index + 1) % N_dist;
 
+    float sum = 0;
+    for (int i = 0; i < N_dist; i++) {
+        sum += distances[i];
+    }
+    return sum / N_dist;
+}
 
 long microsecondsToCentimeters(long microseconds){
   return microseconds/29/2;
