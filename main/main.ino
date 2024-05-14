@@ -1,11 +1,12 @@
+
 #include <Servo.h>
 #include <PID.h>
 #include <steeringPID.h>
-
+// 130.240.153.148
 ////// Constants //////
 // Pins
 const byte HALL_INTERRUPT_PIN = 12;
-const byte MOTOR_PIN = 8;
+const byte MOTOR_PIN = 7;
 const byte SERVO_PIN = 5;
 
 
@@ -15,7 +16,8 @@ const byte LEFT_ECHO_PIN = 23;
 const byte RIGHT_PING_PIN = 52;
 const byte RIGHT_ECHO_PIN = 53;
 
-
+const byte FORWARD_PING_PIN = 27;
+const byte FORWARD_ECHO_PIN = 26;
 
 // Wheel circumference in meters
 const float WHEEL_CIRCUMFERENCE = 0.2042; 
@@ -35,27 +37,37 @@ Servo motor_servo;
 Servo steering_servo;
 
 // motor PID constants
-volatile float Kp = 1.4;
-volatile float Ki = 2.2;
+volatile float Kp = 2;
+volatile float Ki = 1;
 volatile float Kd = 0;
-PID pid(motor_servo, Kp, Ki, Kd);
+const int integral_buffer = 200;
+PID pid(motor_servo, Kp, Ki, Kd, integral_buffer);
 
 
 // steerig PID constants
 volatile float s_Kp = 0.3;
-volatile float s_Ki = 0;
-volatile float s_Kd = 0;
-steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd);
+volatile float s_Ki = -0.05;
+volatile float s_Kd = -0.1;
+const int s_integral_buffer = 30;
+steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd, s_integral_buffer);
 
 // N point running average for left, right distance
 const int N_dist = 3;
 float left_distances[N_dist] = {0};
 float right_distances[N_dist] = {0}; 
+float forward_distances[N_dist] = {0};
 float left_avg = 0;
 float right_avg = 0;
+float forward_avg = 0;
 int left_index = 0;
 int right_index = 0;
+int forward_index = 0;
+float forward_distance = 0;
 
+const int N_spd = 5;
+volatile float speeds[N_spd] = {0};
+volatile int speed_index = 0;
+volatile float speed_avg = 0;
 // Angle and "speed" to send to motor servo and steering servo
 int motor_speed = 1500;  // 1500 stilla, 2000 max frammåt, 1000 max backåt
 int steering_angle = 70; // mellan 45 och 95 typ, 45 höger, 95 vänster
@@ -86,6 +98,7 @@ void setup() {
     
     pinMode(HALL_INTERRUPT_PIN, INPUT_PULLUP);
     pinMode(SERVO_PIN, OUTPUT);
+    pinMode(MOTOR_PIN, OUTPUT);
 
     steering_servo.attach(SERVO_PIN);
     motor_servo.attach(MOTOR_PIN, 1000, 2000);
@@ -104,6 +117,9 @@ void setup() {
     pinMode(RIGHT_PING_PIN, OUTPUT);
     pinMode(RIGHT_ECHO_PIN, INPUT);
 
+    pinMode(FORWARD_PING_PIN, OUTPUT);
+    pinMode(FORWARD_ECHO_PIN, INPUT);
+
     
 
     delay(1000);    
@@ -112,26 +128,23 @@ void setup() {
 void loop() {
     current_time = millis();
     
-
-    int u = pid.update(current_time);
-    if (u<1585) {
+    int u = pid.update(current_time, forward_avg);
+    //Serial.print("U: ");
+    //Serial.println(u);
+    if (u<1575) {
       u = 1500;
     }
-    //motor_servo.writeMicroseconds(u);
+    //Serial.println(u);
+    motor_servo.writeMicroseconds(u);
+    
 
     
 
-    left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
-    right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
-    left_avg = getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index);
-    right_avg = getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index);
-    /*
-    if (right_avg>100){
-        right_avg = 100;
-    }    
-    if (left_avg>100){
-        left_avg = 100;
-    }*/
+    //left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
+    //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
+    left_avg = getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index, 1500);
+    right_avg = getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index, 1500);
+    forward_avg = getAverageDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN, forward_distances, forward_index, 1500);
     int angle = s_pid.update(current_time, left_avg, right_avg);
     steering_servo.write(angle);
 
@@ -148,36 +161,40 @@ void loop() {
     }
 
     if (current_time-last_time > 50) {
-      current_vel = 0;
-      pid.update_velocity(current_vel);
+        current_vel = 0;
+        pid.update_velocity(current_vel);
+    }else{
+        pid.update_velocity(current_vel);
     }
 
 
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PING);
     //forward_distance = getDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN);
-    
-    Serial.print("R: ");
+    /*
+    Serial.print("\tR: ");
     Serial.print(right_avg);
     Serial.print("\tL: ");
     Serial.print(left_avg);
+    Serial.print("\tF: ");
+    Serial.print(forward_avg);
     Serial.print("\tU: ");
     Serial.println(angle);
-    
+    */
 
-    String to_send = String(current_vel) + "-" + String(left_distance) + "-" + String(right_distance);
+    //String to_send = String(current_vel) + "-" + String(left_distance) + "-" + String(right_distance);
     
     //Serial.println(to_send);
-
+    //Serial.println(current_vel);
 
     if (Serial.available() > 0) { 
-        setSpeed();
-        //setSpeedAndAngle();
-    }    
+        input = Serial.readStringUntil('\n');
+        pid.set_velocity(input.toFloat());
+    }   
+    //Serial.println(input.toFloat() - current_vel); 
 }
 
 void setSpeed(){
-  input = Serial.readStringUntil('\n');
-  motor_servo.writeMicroseconds(input.toInt());
+
 }
 void setSpeedAndAngle(){
     input = Serial.readStringUntil('\n');
@@ -212,7 +229,7 @@ long getDistance(byte trigger_pin, byte echo_pin){
     return microsecondsToCentimeters(duration);
 }
 
-float getAverageDistance(byte trigger_pin, byte echo_pin, float *distances, int &index){
+float getAverageDistance(byte trigger_pin, byte echo_pin, float *distances, int &index, int max){
     long cm = getDistance(trigger_pin, echo_pin);
     
     distances[index] = cm;
@@ -222,8 +239,14 @@ float getAverageDistance(byte trigger_pin, byte echo_pin, float *distances, int 
     for (int i = 0; i < N_dist; i++) {
         sum += distances[i];
     }
-    return sum / N_dist;
+    sum /= N_dist;
+    if (sum > max){
+        sum = max;
+    }
+    
+    return sum;
 }
+
 
 long microsecondsToCentimeters(long microseconds){
   return microseconds/29/2;
@@ -240,16 +263,26 @@ void updateDelta(){
   last_hall_counter = hall_counter;
 
   if (delta_time>0) {
-    current_vel = getVelocity();
+    current_vel = getVelocity(speeds, speed_index);
   }
   pid.update_velocity(current_vel);
 }
 
 // Returnerar Velocity basarat på delta_time
-float getVelocity(){
+
+float getVelocity(volatile float* speeds, volatile int &index){
     float distance = (delta_hall_counter*WHEEL_CIRCUMFERENCE)/NUM_MAGNETS;
     current_vel = (((distance*1000)/(delta_time))+current_vel)/2;
-    return current_vel;
+
+    speeds[index] = current_vel;
+    index = (index + 1) % N_spd;
+
+    float sum = 0;
+    for (int i = 0; i < N_spd; i++) {
+        sum += speeds[i];
+    }
+    
+    return sum/N_spd;
 }
 
 void hallISR(){
