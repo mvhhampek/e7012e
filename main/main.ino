@@ -2,7 +2,7 @@
 #include <Servo.h>
 #include <PID.h>
 #include <steeringPID.h>
-// 130.240.153.148
+// 130.240.152.251
 ////// Constants //////
 // Pins
 const byte HALL_INTERRUPT_PIN = 12;
@@ -10,14 +10,14 @@ const byte MOTOR_PIN = 7;
 const byte SERVO_PIN = 5;
 
 
-const byte LEFT_PING_PIN = 22;
-const byte LEFT_ECHO_PIN = 23;
+const byte LEFT_PING_PIN = 27;
+const byte LEFT_ECHO_PIN = 26;
 
 const byte RIGHT_PING_PIN = 52;
 const byte RIGHT_ECHO_PIN = 53;
 
-const byte FORWARD_PING_PIN = 27;
-const byte FORWARD_ECHO_PIN = 26;
+const byte FORWARD_PING_PIN = 22;
+const byte FORWARD_ECHO_PIN = 23;
 
 // Wheel circumference in meters
 const float WHEEL_CIRCUMFERENCE = 0.2042; 
@@ -38,21 +38,21 @@ Servo steering_servo;
 
 // motor PID constants
 volatile float Kp = 2;
-volatile float Ki = 1;
+volatile float Ki = 2;
 volatile float Kd = 0;
-const int integral_buffer = 200;
+const int integral_buffer = 100;
 PID pid(motor_servo, Kp, Ki, Kd, integral_buffer);
 
 
 // steerig PID constants
-volatile float s_Kp = 0.3;
-volatile float s_Ki = -0.05;
-volatile float s_Kd = -0.1;
+volatile float s_Kp = 2.2;
+volatile float s_Ki = 0;
+volatile float s_Kd = -0.6;
 const int s_integral_buffer = 30;
 steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd, s_integral_buffer);
 
 // N point running average for left, right distance
-const int N_dist = 3;
+const int N_dist = 2;
 float left_distances[N_dist] = {0};
 float right_distances[N_dist] = {0}; 
 float forward_distances[N_dist] = {0};
@@ -142,9 +142,15 @@ void loop() {
 
     //left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
-    left_avg = getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index, 1500);
-    right_avg = getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index, 1500);
-    forward_avg = getAverageDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN, forward_distances, forward_index, 1500);
+    left_avg = getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index, 2000);
+    right_avg = getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index, 2000);
+    forward_avg = getAverageDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN, forward_distances, forward_index, 2000);
+    if (left_avg > 250){
+        left_avg = 10000;
+    } 
+    if (right_avg > 250){
+        right_avg = 10000;
+    }
     int angle = s_pid.update(current_time, left_avg, right_avg);
     steering_servo.write(angle);
 
@@ -170,7 +176,7 @@ void loop() {
 
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PING);
     //forward_distance = getDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN);
-    /*
+    
     Serial.print("\tR: ");
     Serial.print(right_avg);
     Serial.print("\tL: ");
@@ -179,7 +185,7 @@ void loop() {
     Serial.print(forward_avg);
     Serial.print("\tU: ");
     Serial.println(angle);
-    */
+    
 
     //String to_send = String(current_vel) + "-" + String(left_distance) + "-" + String(right_distance);
     
