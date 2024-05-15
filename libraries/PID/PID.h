@@ -5,18 +5,22 @@
 
 class PID {
 public:
-    PID(Servo motor_servo, float Kp, float Ki, float Kd);
+    PID(Servo motor_servo, float Kp, float Ki, float Kd, int buffer_size);
     void set_velocity(float velocity);
-    int update(int current_time);
+    int update(int current_time, float forward_distance);
     void update_velocity(float velocity);
 private:
     Servo _motor_servo;
 
     int _u;
 
-    int _Kp;
-    int _Ki;
-    int _Kd;
+    float _Kp;
+    float _Ki;
+    float _Kd;
+
+    int _buffer_size;
+    int _buffer_index;
+    float* integral_error_buffer;
 
     int _last_time;
     float _delta_time;

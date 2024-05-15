@@ -5,17 +5,21 @@
 
 class steeringPID {
 public:
-	steeringPID(Servo steering_servo, float Kp, float Ki, float Kd);
+	steeringPID(Servo steering_servo, float Kp, float Ki, float Kd, int buffer_size);
 	void set_error(float error);
     int update(int current_time, float left_distance, float right_distance);
 private:
     Servo _steering_servo;
-
+    
     int _u;
+    // buffer så att integralfelet inte går från k=0 till k=inf
+    int _buffer_size;
+    int _buffer_index;
+    float* integral_error_buffer;
 
-    int _Kp;
-    int _Ki;
-    int _Kd;
+    float _Kp;
+    float _Ki;
+    float _Kd;
 
     int _last_time;
     float _delta_time;
