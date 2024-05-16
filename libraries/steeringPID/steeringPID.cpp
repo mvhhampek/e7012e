@@ -42,13 +42,9 @@ int steeringPID::update(int current_time, float left_distance, float right_dista
         //Serial.print(left_distance);
         //Serial.print("\tright");
         //Serial.print(right_distance);
-        //if (left_distance > 400){
-        //    left_distance = 10000;
-        //} 
-        //if (right_distance > 400){
-        //    right_distance = 10000;
-        //}
-        _dist_error = left_distance - right_distance;
+
+        //_dist_error = left_distance - right_distance;
+        _dist_error = 70 - right_distance;
         // if (_dist_error < 50){
         //    _dist_error = 0;
         //}
@@ -76,9 +72,8 @@ int steeringPID::update(int current_time, float left_distance, float right_dista
 
         _last_time = current_time;
         _last_dist_error = _dist_error; 
-        
+
         _u = 70 + _Kp*_dist_error + _Ki*_integral_error + _Kd*_delta_error; 
-        
         
         //((_Kp*_dist_error+_Ki*_integral_error+_Kd*_delta_error+70)+_u)/2;
         // Constraints

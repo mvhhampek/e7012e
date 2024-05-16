@@ -45,14 +45,14 @@ PID pid(motor_servo, Kp, Ki, Kd, integral_buffer);
 
 
 // steerig PID constants
-volatile float s_Kp = 0.3;
+volatile float s_Kp = 0.55;
 volatile float s_Ki = 0.04;
 volatile float s_Kd = -0.4;
 const int s_integral_buffer = 20;
 steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd, s_integral_buffer);
 
 // steerig PID curve constants
-volatile float s_Kp_c = 5.7;
+volatile float s_Kp_c = 5.4;
 volatile float s_Ki_c = 0;
 volatile float s_Kd_c = 0;
 const int s_integral_buffer_c = 20;
@@ -80,7 +80,7 @@ int motor_speed = 1500;  // 1500 stilla, 2000 max frammåt, 1000 max backåt
 int steering_angle = 70; // mellan 45 och 95 typ, 45 höger, 95 vänster
 
 float corridor_speed = 0;
-float curve_speed = 0.3;
+float curve_speed = 0.6;
 
 int speed_ref = 0;
 int old_speed_ref = 0;
@@ -97,10 +97,9 @@ volatile float prev_left = 0;
 volatile int last_time = 0;
 volatile int current_time = 1;
 volatile int delta_time = 0;
-
+bool wrote = true;
 bool flag = true;
 bool update_flag = false;
-
 // user input...
 String input = "";
 int int_input = 0;
@@ -156,7 +155,8 @@ void loop() {
     left_avg = (getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index, 2000));
     right_avg = (getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index, 2000));
     forward_avg = getAverageDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN, forward_distances, forward_index, 2000);
-    if (forward_avg<200) {
+    right_avg = min(forward_avg, right_avg);
+    if (forward_avg>2000000) {
       time_enter_curve = current_time;
       is_in_curve = true;
     }
@@ -222,8 +222,11 @@ void loop() {
         input = Serial.readStringUntil('\n');
         corridor_speed=input.toFloat();
         pid.set_velocity(input.toFloat());
+        wrote = false;
     }   
-    //Serial.println(input.toFloat() - current_vel); 
+    if (current_vel > 0.4 && wrote){
+        pid.set_velocity(0.5);
+    }
 }
 
 void setSpeed(){
