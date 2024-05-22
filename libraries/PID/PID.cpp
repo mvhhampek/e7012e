@@ -62,9 +62,10 @@ int PID::update(int current_time, float forward_distance) {
         _last_time = current_time;
         _last_velocity_error = _velocity_error;
         //Serial.println(_velocity_error);
-        _u = (_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1600);
+        _u = (_Kp*_velocity_error+_Ki*_integral_error+_Kd*_delta_error+1575);
         if (_target_velocity == 0){
             _u = 1500;
+            Serial.println("AAAAAAA: ");
         }
         /*
         Serial.print("P: ");
@@ -79,7 +80,7 @@ int PID::update(int current_time, float forward_distance) {
         //_u *= forward_distance/200;
         //Serial.print("U: ");
         //Serial.println(_u);
-        if (_u<1575) {
+        if (_u<1500) {
             _u=1500;
         }
         if (_u>1700) {
