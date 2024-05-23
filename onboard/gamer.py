@@ -41,7 +41,7 @@ def run():
 
 
 
-
+###### NOT UP TO DATE ######
 if __name__ == '__main__':
     # Find COM port
     ports = serial.tools.list_ports.comports()
