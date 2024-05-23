@@ -38,17 +38,17 @@ Servo motor_servo;
 Servo steering_servo;
 
 // motor PID constants
-volatile float Kp = 5;
-volatile float Ki = 2;
+volatile float Kp = 12;
+volatile float Ki = 1;
 volatile float Kd = 0;
 const int integral_buffer = 100;
 PID pid(motor_servo, Kp, Ki, Kd, integral_buffer);
 
 
 // steerig PID constants
-volatile float s_Kp = 0.8;
-volatile float s_Ki = 0.04;
-volatile float s_Kd = -0.4;
+volatile float s_Kp = 0.5;
+volatile float s_Ki = 0.005;
+volatile float s_Kd = -0.45;
 const int s_integral_buffer = 20;
 steeringPID s_pid(steering_servo, s_Kp, s_Ki, s_Kd, s_integral_buffer);
 
@@ -142,6 +142,7 @@ void loop() {
     //left_distance  = getDistance(LEFT_PING_PIN, LEFT_ECHO_PIN);
     //right_distance = getDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN);
     //left_avg = (getAverageDistance(LEFT_PING_PIN, LEFT_ECHO_PIN, left_distances, left_index, 2000));
+    left_avg=0;
     right_avg = (getAverageDistance(RIGHT_PING_PIN, RIGHT_ECHO_PIN, right_distances, right_index, 2000));
     forward_avg = getAverageDistance(FORWARD_PING_PIN, FORWARD_ECHO_PIN, forward_distances, forward_index, 2000);
     right_avg = min(forward_avg, right_avg);
@@ -205,7 +206,7 @@ void loop() {
     }   
     if (current_vel > 0.1 && !running){
         Serial.println("hej");
-        speed_ref = 1.5;
+        speed_ref = 1;
         pid.set_velocity(speed_ref);
  
 
