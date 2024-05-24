@@ -7,7 +7,7 @@ class ai():
         # Loading model
         self.model = torch.jit.load(model)
         self.model.eval()
-        self.running_pred = torch.tensor([0,0,0])
+        self.running_pred = torch.tensor([0,1,0])
         self.transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((120,160)),
