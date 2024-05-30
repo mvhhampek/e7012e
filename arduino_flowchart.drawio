@@ -1,0 +1,145 @@
+<mxfile host="app.diagrams.net" modified="2024-05-30T13:08:01.067Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="HsSPW8sELAxsXWBsq-u4" version="24.4.10" type="device">
+  <diagram name="Sida-1" id="8RX9ULq2wv1BniO6Omdn">
+    <mxGraphModel dx="1372" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-2" target="R0C03tQIYfYhm2FtT2Ww-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-2" value="Read from SBC&lt;div&gt;(Serial)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="574.9399999999999" y="114.99999999999999" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-5" target="R0C03tQIYfYhm2FtT2Ww-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="724.9399999999999" y="150" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="725.9399999999999" y="240" />
+              <mxPoint x="725.9399999999999" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-5" target="R0C03tQIYfYhm2FtT2Ww-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-5" value="Input recieved?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="594.9399999999999" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-6" value="No" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="674.9399999999999" y="215" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-7" value="Yes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="634.9399999999999" y="280" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-9">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="574.9399999999999" y="145" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="529.9399999999999" y="350" />
+              <mxPoint x="529.9399999999999" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-9" value="Set motor PID target to received input" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="589.9399999999999" y="325" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-11" target="R0C03tQIYfYhm2FtT2Ww-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-11" value="Start" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="754.9399999999999" y="119.99999999999999" width="74" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" target="R0C03tQIYfYhm2FtT2Ww-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="828.9399999999999" y="145" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="828.9399999999999" y="146" />
+              <mxPoint x="921.9399999999999" y="146" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="844.9399999999999" y="145" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="897.9399999999999" y="99.99999999999999" />
+              <mxPoint x="844.9399999999999" y="99.99999999999999" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-14" value="Is running?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="862.6899999999999" y="109.99999999999999" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-15" value="No&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="894.9399999999999" y="89.99999999999999" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-22" target="R0C03tQIYfYhm2FtT2Ww-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-18">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="974.9341860465116" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-18" value="Covert to centimeters" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="926.4399999999999" y="285" width="97" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" target="R0C03tQIYfYhm2FtT2Ww-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="974.9341860465116" y="405" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-20" value="Update steering PID with current distance from wall" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="924.9399999999999" y="355" width="118.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-14" target="R0C03tQIYfYhm2FtT2Ww-22">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="921.9400000000002" y="347.35" as="targetPoint" />
+            <mxPoint x="921.9399999999999" y="307.35" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-22" value="Read Sonar signal" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="926.4399999999999" y="220" width="97" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-23" value="Yes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="888.4399999999999" y="175" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="974.9399999999999" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-25" value="Write PID output signal to steering servo (PWM)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="924.9399999999999" y="435" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-27" target="R0C03tQIYfYhm2FtT2Ww-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="836.9399999999999" y="510" />
+              <mxPoint x="1054.94" y="510" />
+              <mxPoint x="1054.94" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-27" value="Write PID output signal to speed controller (PWM)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="786.6899999999999" y="380" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-30" target="R0C03tQIYfYhm2FtT2Ww-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-30" target="R0C03tQIYfYhm2FtT2Ww-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-30" value="Measure current velocity from Encoder" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="786.6899999999999" y="220" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="R0C03tQIYfYhm2FtT2Ww-32" target="R0C03tQIYfYhm2FtT2Ww-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R0C03tQIYfYhm2FtT2Ww-32" value="Update motor PID with current velocity&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="784.9399999999999" y="300" width="103.5" height="45" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
